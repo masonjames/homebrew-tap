@@ -7,6 +7,18 @@ cask "masonjames-qlcolorcode" do
   desc "Syntax-colored Quick Look previews for source code"
   homepage "https://github.com/masonjames/QLColorCode"
 
+  livecheck do
+    url :url
+    regex(/^v(\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?)$/i)
+    strategy :github_releases do |json, regex|
+      json.filter_map do |release|
+        next if release["draft"]
+
+        release["tag_name"]&.[](regex, 1)
+      end
+    end
+  end
+
   depends_on macos: :sequoia
 
   app "QLColorCode.app"
